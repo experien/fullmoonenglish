@@ -3,27 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>Full Moon English</title>
-
-    <script type="text/javascript">
-      function printResults() {
-        var srcText = document.getElementById("srcText").value;
-        var dstElm = document.getElementById("output");
-        dstElm.innerHTML = "<p>" + srcText + "</p>";
-        // genResults(srcText).map(x => "<p>" + x + "</p>").join("");
-      }
-
-      function copyToClipboard() {
-        var srcElm = document.getElementById("output");
-        var t = document.createElement("textarea");
-        document.body.appendChild(t);
-        t.value = srcElm.innerText;
-        t.select();
-        document.execCommand('Copy');
-        document.body.removeChild(t);
-        var repr = (t.value.length <= 20) ? t.value : (t.value.substring(0, 20) + "...");
-        alert("Copied: " + repr);
-      }
-    </script>
+    <script src="scripts.js"></script>
   </head>
   <body>
     <div id="container">
@@ -36,31 +16,29 @@
       <div id="input">
         Article:
         <p>
-          <textarea id="srcText" rows="15" cols="80"></textarea>
+          <textarea id="inputText" rows="10" cols="80" placeholder="Type article here"></textarea>
         </p>
         <p>
-
-
-          Max
-
-          <select id="maxResult">
-            <option value="5">5 </option>
-            <option value="10">10</option>
-            <option value="15">15</option>
-            <option value="20">20</option>
+          Problem type:
+          <select id="pbType">
+            <option value="wrdBlank">Blank word</option>
+            <option value="stcOrder">Sentence order</option>
+            <option value="stcInsert">Missing sentence</option>
           </select>
-          <input type="button" value="Generate" onclick="printResults()">
+          <input type="button" value="Generate" onclick="generate()" />
         </p>
       </div>
 
       <hr>
 
-      <div id="copyButton">
-        <input type="button" value="Copy to clipboard" onclick="copyToClipboard()">
-      </div>
-
       <div id="output">
-        <!-- this section is controlled by genResuilt() -->
+        <p>
+          <input type="button" value="Copy to clipboard" onclick="copyToClipboard()" />
+        </p>
+        <p>
+          Result:
+        </p>
+        <textarea id="outputText", rows="20" cols="80" placeholder="Problems will be generated here"></textarea>
       </div>
     </div>
 
