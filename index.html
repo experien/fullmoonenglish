@@ -17,13 +17,16 @@
         Article:
         <p>
           <textarea id="inputText" rows="10" cols="80" placeholder="Type article here"></textarea>
+          <script type="text/javascript">
+            document.getElementById("inputText").focus();
+          </script>
         </p>
         <p>
           Problem type:
           <select id="pbType">
-            <option value="wrdBlank">Blank word</option>
             <option value="stcOrder">Sentence order</option>
             <option value="stcInsert">Missing sentence</option>
+            <option value="wrdBlank">Blank word</option>
           </select>
           <input type="button" value="Generate" onclick="generate()" />
         </p>

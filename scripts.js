@@ -53,6 +53,10 @@ function partition3(arr) {
 function genStcOrder(srcText) {
   // 지문 분할
   var stcArr = splitStc(srcText);
+  if (stcArr.length < 3) {
+    return "At least 3 sentences are required.";
+  }
+
   var pArr = partition3(stcArr);
 
   // 각 파티션 앞에 A, B, C 를 붙이고 섞는다 (rightOrder=원래 순서=정답)
@@ -77,6 +81,10 @@ function genStcOrder(srcText) {
 
 function genStcInsert(srcText) {
   var stcArr = splitStc(srcText);
+  if (stcArr.length <= 1) {
+    return "At least 2 sentences are required.";
+  }
+
   var alpha = Array.from("ABCDEFGHIJKLMNOPQRSTUVWXYZ").slice(0, stcArr.length);
   alpha = alpha.map(x => "("+x+")");
 
