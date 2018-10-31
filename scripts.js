@@ -71,7 +71,7 @@ function shuffle(a) {
 
 
 function splitStc(srcText) {
-  ret = srcText.split(/(?<=[\.\?\!]\S?)(\s|$)/g).filter(x => x!=" ");
+  ret = srcText.split(/(?<=[\.\?\!]\S?)(\s|$)/g).filter(x => x!="" && x!=" ");
   //console.log(ret);
   return ret;
 }
@@ -185,7 +185,7 @@ function splitArticles() {
   if (!txt)
     return;
 
-  g_articles = txt.split(/\n\s*\n+/g).filter(x => x!="");
+  g_articles = txt.split(/\n\s*\n+/g).filter(x => x!="" && x!=" ");
   firstPage();
 }
 
