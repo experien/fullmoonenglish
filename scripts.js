@@ -185,7 +185,7 @@ function splitArticles() {
   if (!txt)
     return;
 
-  g_articles = txt.split(/\n{2,}/g).filter(x => x!="");
+  g_articles = txt.split(/\n\s*\n+/g).filter(x => x!="");
   firstPage();
 }
 
