@@ -1,48 +1,52 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html>
   <head>
     <meta charset="utf-8">
-    <title>Full Moon English</title>
-    <script src="scripts.js"></script>
+    <meta name="description" content="English problem generator" />
     <link rel="stylesheet" href="style.css">
+    <script src="scripts.js"></script>
+
+    <title>Full Moon English</title>
   </head>
   <body>
-    <div id="container">
-      <div id="header">
-        <h1>Full Moon English</h1>
+    <div class="wrapper">
+      <div class="container header">
+        <h1><a href="">Full Moon English</a></h1>
       </div>
 
-      <hr>
-
-      <div id="input">
-        Article:
+      <div class="container workspace">
         <p>
-          <textarea id="inputText" rows="10" cols="80" placeholder="Type article here"></textarea>
-          <script type="text/javascript">
-            document.getElementById("inputText").focus();
-          </script>
+          <input type="button" value="Load" onclick="splitArticles()" />
         </p>
+
+        <p><textarea id="inputText" rows="10" placeholder="Paste articles here, and press 'Load'"></textarea></p>
+
+        <p id="PageMoveButtons">
+          <input type="button" value="<<<" onclick="firstPage()" />
+          <input type="button" value="<" onclick="prevPage()" />
+          <span id="pages">0 / 0</span>
+          <input type="button" value=">" onclick="nextPage()" />
+          <input type="button" value=">>>" onclick="lastPage()" />
+        </p>
+
         <p>
           Problem type:
           <select id="pbType">
             <option value="stcOrder">Sentence order</option>
             <option value="stcInsert">Missing sentence</option>
-            <option value="wrdBlank">Blank word</option>
+            <option value="stcTopic">Topic sentence</option>-->
+            <!--<option value="wrdBlank">Blank word</option>-->
           </select>
-          <input type="button" value="Generate" onclick="generate()" />
+          <input type="button" value="Generate ↓" onclick="generate()" />
+          <input type="button" value="Append →" onclick="append()" />
         </p>
+
+        <p><textarea id="tmpOutputText" rows="15" placeholder="Problems will be generated"></textarea></p>
       </div>
 
-      <hr>
-
-      <div id="output">
-        <p>
-          <input type="button" value="Copy to clipboard" onclick="copyToClipboard()" />
-        </p>
-        <p>
-          Result:
-        </p>
-        <textarea id="outputText" rows="20" cols="80" readonly placeholder="Problems will be generated here"></textarea>
+      <div class="container output">
+        <p><input type="button" value="Copy to clipboard" onclick="copyToClipboard()" /></p>
+        <textarea id="outputText" rows="32" placeholder="Edit your document"></textarea>
       </div>
     </div>
 

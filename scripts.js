@@ -1,15 +1,72 @@
-// generators and subfunctions
+g_articles = [];
+g_page = 0;
 
-// Fisher–Yates shuffle algorithm
+
+function getElm(id) {
+  return document.getElementById(id);
+}
+
+
+function getVal(id) {
+  return document.getElementById(id).value;
+}
+
+
+function setVal(id, value) {
+  document.getElementById(id).value = value;
+}
+
+
+/* ============== page movements ==============*/
+function viewPage() {
+  if (g_articles.length > 0) {
+    getElm("inputText").value = g_articles[g_page];
+  }
+  getElm("pages").innerText = (g_page+1) + " / " + g_articles.length;
+}
+
+
+function firstPage() {
+  g_page = 0;
+  viewPage();
+}
+
+
+function lastPage() {
+  if (g_articles.length > 0) {
+    g_page = g_articles.length - 1;
+    viewPage();
+  }
+}
+
+
+function nextPage() {
+  if (g_articles.length > 0 && g_page < g_articles.length-1) {
+    g_page++;
+    viewPage();
+  }
+}
+
+
+function prevPage() {
+  if (g_articles.length > 0 && g_page > 0) {
+    g_page--;
+    viewPage();
+  }
+}
+
+
+/* ============== generator subfunctions ==============*/
 function shuffle(a) {
-    var j, x, i;
-    for (i = a.length - 1; i > 0; i--) {
-        j = Math.floor(Math.random() * (i + 1));
-        x = a[i];
-        a[i] = a[j];
-        a[j] = x;
-    }
-    return a;
+  // Fisher–Yates shuffle algorithm
+  var j, x, i;
+  for (i = a.length - 1; i > 0; i--) {
+      j = Math.floor(Math.random() * (i + 1));
+      x = a[i];
+      a[i] = a[j];
+      a[j] = x;
+  }
+  return a;
 }
 
 
@@ -50,6 +107,7 @@ function partition3(arr) {
 }
 
 
+/* ============== generator functions ==============*/
 function genStcOrder(srcText) {
   // 지문 분할
   var stcArr = splitStc(srcText);
@@ -102,31 +160,55 @@ function genStcInsert(srcText) {
 }
 
 
-function genNoop(srcText) {
-  return "Not implemented";
+function genStcTopic(srcText) {
+  var stcArr = splitStc(srcText);
+  if (stcArr.length <= 1) {
+    return "At least 2 sentences are required.";
+  }
+
+  var alpha = Array.from("ABCDEFGHIJKLMNOPQRSTUVWXYZ").slice(0, stcArr.length);
+  alpha = alpha.map(x => "("+x+")");
+  for (var i = 0; i < stcArr.length; i++) {
+    stcArr[i] = alpha[i] + " " + stcArr[i];
+  }
+
+  var article = stcArr.join(" ");
+  var selections = selectionStr(alpha);
+  console.log("answer = ?");
+  return [article, "위 지문에서 주제문으로 적절한 문장은?", selections].join("\n\n");
 }
 
 
-// main functions
-function generate() {
-  var srcText = document.getElementById("inputText").value;
-  var pbType = document.getElementById("pbType").value;
-  var dstElm = document.getElementById("outputText");
+/* ============== main functions ==============*/
+function splitArticles() {
+  txt = getVal("inputText");
+  if (!txt)
+    return;
 
+  g_articles = txt.split(/\n{2,}/g).filter(x => x!="");
+  firstPage();
+}
+
+
+function generate() {
   var genFuncs = {
-    "wrdBlank":genNoop,
-    "stcOrder":genStcOrder,
-    "stcInsert":genStcInsert
+    "stcOrder": genStcOrder,
+    "stcInsert": genStcInsert,
+    "stcTopic": genStcTopic
   };
-  dstElm.value = genFuncs[pbType](srcText);
+
+  setVal("tmpOutputText", genFuncs[getVal("pbType")](getVal("inputText")));
+}
+
+
+function append() {
+  var txt = "\n\n" + getVal("tmpOutputText") + "\n";
+  getElm("outputText").appendChild(document.createTextNode(txt));
 }
 
 
 function copyToClipboard() {
-  var srcElm = document.getElementById("outputText");
-
-  srcElm.select();
-  document.execCommand('Copy');
-  var repr = (srcElm.value.length <= 20) ? srcElm.value : (srcElm.value.substring(0, 20) + "...");
-  alert("Copied: " + repr);
+  getElm("outputText").select();
+  document.execCommand("copy");
+  alert("Copied the text: " + getVal("outputText").substring(0, 20) + "...");
 }
