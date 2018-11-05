@@ -18,7 +18,6 @@ input, span, textarea {
 .wrapper textarea {
   width: 400px;
   height: 200px;
-  resize: none;
 }
 
 .header {
@@ -45,6 +44,7 @@ input, span, textarea {
 
   .wrapper textarea {
     width: 700px;
+    resize: none;
   }
 
   #inputText, #tmpOutputText {
