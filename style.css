@@ -1,5 +1,5 @@
 * {
-  font-size: 16pt;
+  font-size: 14pt;
 }
 
 .container {
@@ -16,7 +16,7 @@
 }
 
 .wrapper textarea {
-  width: 60px;
+  width: 80px;
   resize: none;
 }
 
