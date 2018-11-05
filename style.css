@@ -16,7 +16,7 @@ input, span, textarea {
 }
 
 .wrapper textarea {
-  min-width: 150px;
+  min-width: 300px;
   height: 200px;
   resize: none;
 }
