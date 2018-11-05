@@ -16,8 +16,7 @@
 }
 
 .wrapper textarea {
-  width: 95%
-
+  width: auto;
   resize: none;
 }
 
