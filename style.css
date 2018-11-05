@@ -16,7 +16,7 @@
 }
 
 .wrapper textarea {
-  min-width: 100px;
+  min-width: 150px;
   height: 200px;
   resize: none;
 }
