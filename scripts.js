@@ -71,8 +71,9 @@ function shuffle(a) {
 
 
 function splitStc(srcText) {
-  ret = srcText.split(/(?<=[\.\?\!]\S?)(\s|$)/g).filter(x => x!="" && x!=" ");
-  //console.log(ret);
+  //ret = srcText.split(/(?<=[\.\?\!]\S?)(\s|$)/g).filter(x => x!="" && x!=" ");
+  ret = srcText.match(/[\w\(\"].*?[\.!\?][\)\"]?(?=\s*)/g);
+  console.log(ret);
   return ret;
 }
 
@@ -111,7 +112,7 @@ function partition3(arr) {
 function genStcOrder(srcText) {
   // 지문 분할
   var stcArr = splitStc(srcText);
-  if (stcArr.length < 3) {
+  if (!stcArr || stcArr.length < 3) {
     return "At least 3 sentences are required.";
   }
 
@@ -139,7 +140,7 @@ function genStcOrder(srcText) {
 
 function genStcInsert(srcText) {
   var stcArr = splitStc(srcText);
-  if (stcArr.length <= 1) {
+  if (!stcArr || stcArr.length <= 1) {
     return "At least 2 sentences are required.";
   }
 
@@ -162,7 +163,7 @@ function genStcInsert(srcText) {
 
 function genStcTopic(srcText) {
   var stcArr = splitStc(srcText);
-  if (stcArr.length <= 1) {
+  if (!stcArr || stcArr.length <= 1) {
     return "At least 2 sentences are required.";
   }
 
