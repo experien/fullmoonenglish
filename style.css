@@ -1,4 +1,4 @@
-* {
+input, span, textarea {
   font-size: 14pt;
 }
 
@@ -36,4 +36,22 @@
 
 .output {
   float: left;
+}
+
+@media screen and (min-width: 1400px) {
+  input, span, textarea {
+    font-size: 11pt;
+  }
+
+  .wrapper textarea {
+    width: 700px;
+  }
+
+  #inputText, #tmpOutputText {
+    height: 300px;
+  }
+
+  #outputText {
+    height: 705px;
+  }
 }
