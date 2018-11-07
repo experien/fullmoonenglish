@@ -71,9 +71,8 @@ function shuffle(a) {
 
 
 function splitStc(srcText) {
-  //ret = srcText.split(/(?<=[\.\?\!]\S?)(\s|$)/g).filter(x => x!="" && x!=" ");
   ret = srcText.match(/[\w\(\"].*?[\.!\?][\)\"]?(?=\s*)/g);
-  console.log(ret);
+  //console.log("sentences = " + ret);
   return ret;
 }
 
@@ -108,7 +107,79 @@ function partition3(arr) {
 }
 
 
+function nonstopWords(srcText) {
+  return srcText.toLowerCase().match(/\w+/g).filter(x => !stopWords.includes(x));
+}
+
+
+function extractKeyword(wrdArr, n) {
+  // stop words 를 제외하고 가장 많이 나온 단어 n개 중 하나를 뽑는다(소문자로 통일).
+  // 참고: NLP, RAKE alg., JS구현: https://github.com/Ismael-Hery/rake-keywords
+
+  // 빈도 계산
+  var counter = [];
+  var prev = "";
+  var cnt = 0;
+  wrdArr.sort();
+  //onsole.log(kwArr);
+  for (key in wrdArr) {
+    cur = wrdArr[key];
+    if (cur == prev) {
+      cnt++;
+    } else {
+      counter.push({ kw:prev, cnt:cnt });
+      prev = cur;
+      cnt = 1;
+    }
+  }
+  counter.push({ kw:prev, cnt:cnt });
+  counter.sort((a, b) => b.cnt - a.cnt); // 내림차순
+  //console.log(counter.map(x => x.kw));
+
+  // 가장 많이 나온 3단어 중 하나를 고른다.
+  if (counter.length < n)
+    return null;
+
+  var cands = counter.slice(0, n).map(x => x.kw);
+  ret = cands[Math.floor(Math.random() * n)];
+  console.log("cands = " + cands + ", answer = " + ret);
+  return ret;
+}
+
+
 /* ============== generator functions ==============*/
+function genBlkKeyword(srcText) {
+  if (!srcText) {
+    return "";
+  }
+
+  var wrdArr = nonstopWords(srcText);
+  if (!wrdArr || wrdArr.length < 4)
+    return "Too few words";
+
+  var keyword = extractKeyword(wrdArr, 3);
+  if (!keyword)
+    return "Too few words";
+
+
+  // 처음 keyword를 빈 칸으로 바꾼다.
+  // TODO: keyword 위치 중에서 랜덤하게 선택
+  article = srcText.replace(new RegExp(keyword, "gi"), "______");
+
+  // 선택지 4개. nonstopWords 에서 무작위로 뽑음.
+  // TODO: https://www.thesaurus.com/ 에서 연관단어 가져오기
+  selections = [keyword];
+  for (i = 0; i < 4 - 1; i++) {
+    do {
+      word = wrdArr[Math.floor(Math.random() * wrdArr.length)];
+    } while (word == keyword);
+    selections.push(word);
+  }
+
+  return [article, "빈 칸(______)에 들어갈 가장 알맞은 단어는?", selectionStr(selections)].join("\n\n");
+}
+
+
 function genStcOrder(srcText) {
   // 지문 분할
   var stcArr = splitStc(srcText);
@@ -193,9 +264,10 @@ function splitArticles() {
 
 function generate() {
   var genFuncs = {
-    "stcOrder": genStcOrder,
-    "stcInsert": genStcInsert,
-    "stcTopic": genStcTopic
+    "Blank keyword": genBlkKeyword,
+    "Sentence order": genStcOrder,
+    "Missing sentence": genStcInsert,
+    "Topic sentence": genStcTopic
   };
 
   setVal("tmpOutputText", genFuncs[getVal("pbType")](getVal("inputText")));
