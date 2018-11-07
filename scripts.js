@@ -57,16 +57,32 @@ function prevPage() {
 
 
 /* ============== generator subfunctions ==============*/
-function shuffle(a) {
+function shuffle(arr) {
   // Fisher–Yates shuffle algorithm
   var j, x, i;
-  for (i = a.length - 1; i > 0; i--) {
+  for (i = arr.length - 1; i > 0; i--) {
       j = Math.floor(Math.random() * (i + 1));
-      x = a[i];
-      a[i] = a[j];
-      a[j] = x;
+      x = arr[i];
+      arr[i] = arr[j];
+      arr[j] = x;
   }
-  return a;
+  return arr;
+}
+
+
+function randomChoice(arr, n) {
+  if (arr.length < n)
+    n = arr.length;
+
+  indices = []
+  for(var i = 0; i < n; i++) {
+    do {
+      r = Math.floor(Math.random() * arr.length);
+    } while (indices.includes(r));
+    indices.push(r);
+  }
+
+  return indices.map(x => arr[x]);
 }
 
 
@@ -112,8 +128,20 @@ function nonstopWords(srcText) {
 }
 
 
-function extractKeyword(wrdArr, n) {
-  // stop words 를 제외하고 가장 많이 나온 단어 n개 중 하나를 뽑는다(소문자로 통일).
+function allIndexOf(str, srcText) {
+  var re = new RegExp(str, "gi");
+  var m = srcText;
+  var ret = [];
+  while ((m = re.exec(srcText)) != null) {
+    ret.push(m.index);
+  }
+  //console.log("allindex = " + ret);
+  return ret;
+}
+
+
+function wrdCount(wrdArr, n) {
+  // stop words 를 제외하고 가장 많이 나온 단어 n개를 구한다(소문자로 통일).
   // 참고: NLP, RAKE alg., JS구현: https://github.com/Ismael-Hery/rake-keywords
 
   // 빈도 계산
@@ -121,7 +149,6 @@ function extractKeyword(wrdArr, n) {
   var prev = "";
   var cnt = 0;
   wrdArr.sort();
-  //onsole.log(kwArr);
   for (key in wrdArr) {
     cur = wrdArr[key];
     if (cur == prev) {
@@ -135,48 +162,48 @@ function extractKeyword(wrdArr, n) {
   counter.push({ kw:prev, cnt:cnt });
   counter.sort((a, b) => b.cnt - a.cnt); // 내림차순
   //console.log(counter.map(x => x.kw));
+  return counter;
+}
 
-  // 가장 많이 나온 3단어 중 하나를 고른다.
-  if (counter.length < n)
-    return null;
 
-  var cands = counter.slice(0, n).map(x => x.kw);
-  ret = cands[Math.floor(Math.random() * n)];
-  console.log("cands = " + cands + ", answer = " + ret);
-  return ret;
+function replaceAt (srcText, index, target, replacement) {
+    return srcText.substr(0, index) + replacement + srcText.substr(index + target.length);
 }
 
 
 /* ============== generator functions ==============*/
 function genBlkKeyword(srcText) {
+  var numCands = 3;
+
   if (!srcText) {
     return "";
   }
 
+  // 키워드를 뽑는다.
   var wrdArr = nonstopWords(srcText);
-  if (!wrdArr || wrdArr.length < 4)
+  if (!wrdArr || wrdArr.length < numCands)
     return "Too few words";
 
-  var keyword = extractKeyword(wrdArr, 3);
-  if (!keyword)
+  var counter = wrdCount(wrdArr, numCands);
+  if (counter.length < numCands)
     return "Too few words";
 
+    // 가장 많이 나온 단어 3개 중 하나를 고른다.
+  var cands = counter.slice(0, numCands).map(x => x.kw);
+  keyword = randomChoice(cands, 1)[0];
+  console.log("candidates = " + cands);
+  console.log("answer = " + keyword);
 
-  // 처음 keyword를 빈 칸으로 바꾼다.
-  // TODO: keyword 위치 중에서 랜덤하게 선택
-  article = srcText.replace(new RegExp(keyword, "gi"), "______");
-
-  // 선택지 4개. nonstopWords 에서 무작위로 뽑음.
-  // TODO: https://www.thesaurus.com/ 에서 연관단어 가져오기
-  selections = [keyword];
-  for (i = 0; i < 4 - 1; i++) {
-    do {
-      word = wrdArr[Math.floor(Math.random() * wrdArr.length)];
-    } while (word == keyword);
-    selections.push(word);
+  // srcText 안의 keyword 중 무작위 하나를 빈칸으로 변경
+  var indices = randomChoice(allIndexOf(keyword, srcText), 2);
+  article = replaceAt(srcText, indices[0], keyword, "______");
+  if (indices.length >= 2) {
+    article = replaceAt(article, indices[1], keyword, "______");
   }
 
-  return [article, "빈 칸(______)에 들어갈 가장 알맞은 단어는?", selectionStr(selections)].join("\n\n");
+  var selections = [keyword].concat(randomChoice(counter.map(x=>x.kw).filter(x=>x!=keyword), 3));
+
+  return [article, "다음 중 빈 칸(______)에 들어갈 단어는?", selectionStr(selections)].join("\n\n");
 }
 
 
