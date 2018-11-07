@@ -335,6 +335,12 @@ function genStcTopic(srcText) {
 }
 
 
+function genSynonym(srcText) {
+  // TODO: 유의어 반의어
+  return "Sorry, not implemented yet";
+}
+
+
 /* ============== main functions ==============*/
 function splitArticles() {
   txt = getVal("inputText");
@@ -348,12 +354,13 @@ function splitArticles() {
 
 function generate() {
   var genFuncs = {
-    "Pronoun to noun": genPronounGuess,
-    "Blank keyword": genBlkKeyword,
-    "Blank non-keyword": genBlkNonKeyword,
     "Sentence order": genStcOrder,
     "Missing sentence": genStcInsert,
-    "Topic sentence": genStcTopic
+    "Topic sentence": genStcTopic,
+    "Blank keyword": genBlkKeyword,
+    "Blank non-keyword": genBlkNonKeyword,
+    "Pronoun to noun": genPronounGuess,
+    "Synonym": genSynonym
   };
 
   setVal("tmpOutputText", genFuncs[getVal("pbType")](getVal("inputText")));
