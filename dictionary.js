@@ -548,8 +548,7 @@ var pronouns = [
 	"hers",
 	"herself",
 	"these",
-	"them",
-	"that"
+	"them"
 ];
 
 var relativePronouns = [

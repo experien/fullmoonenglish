@@ -176,6 +176,24 @@ function replaceAt (srcText, index, target, replacement) {
 
 
 /* ============== generator functions ==============*/
+function genPronounGuess(srcText) {
+  if (!srcText) {
+    return "";
+  }
+
+  var victimCands = splitWrd(srcText, null).filter(x=>pronouns.includes(x));
+  if (victimCands.length < 1)
+    return "Sorry. can't find appropriate word";
+
+  var victim = randomChoice(victimCands, 1)[0];
+  var index = randomChoice(allIndexOf(victim, srcText), 1)[0];
+  var article = replaceAt(srcText, index, victim, "<<"+victim+">>");
+
+  console.log("answer = Sorry, I don't know");
+  return [article, "위 글에서 <<"+victim+">>"+"이(가) 의마하는 것은?", "_________________"].join("\n\n");
+}
+
+
 function genBlkKeyword(srcText) {
   var numCands = 3;
 
@@ -194,13 +212,13 @@ function genBlkKeyword(srcText) {
 
     // 가장 많이 나온 단어 3개 중 하나를 고른다.
   var cands = counter.slice(0, numCands).map(x => x.kw);
-  keyword = randomChoice(cands, 1)[0];
+  var keyword = randomChoice(cands, 1)[0];
   console.log("candidates = " + cands);
   console.log("answer = " + keyword);
 
   // srcText 안의 keyword 중 무작위 하나를 빈칸으로 변경
   var indices = randomChoice(allIndexOf(keyword, srcText), 2);
-  article = replaceAt(srcText, indices[0], keyword, "______");
+  var article = replaceAt(srcText, indices[0], keyword, "______");
   if (indices.length >= 2) {
     article = replaceAt(article, indices[1], keyword, "______");
   }
@@ -235,11 +253,11 @@ function genBlkNonKeyword(srcText) {
     return "Sorry. can't find appropriate word";
 
   // 지문 생상
-  index = randomChoice(allIndexOf(victim, srcText), 1)[0];
-  article = replaceAt(srcText, index, victim, "______");
+  var index = randomChoice(allIndexOf(victim, srcText), 1)[0];
+  var article = replaceAt(srcText, index, victim, "______");
 
   // 선택지 생성
-  selections = randomChoice(friends.filter(x=>x!=victim), 3);
+  var selections = randomChoice(friends.filter(x=>x!=victim), 3);
   selections.push(victim);
   selections = shuffle(selections);
 
@@ -256,7 +274,7 @@ function genStcOrder(srcText) {
   var pArr = partition3(stcArr);
 
   // 각 파티션 앞에 A, B, C 를 붙이고 섞는다 (rightOrder=원래 순서=정답)
-  rightOrder = shuffle(["(A)", "(B)", "(C)"]);
+  var rightOrder = shuffle(["(A)", "(B)", "(C)"]);
   console.log("answer = " + rightOrder);
   for (var i = 0; i < pArr.length; i++) {
     pArr[i] = rightOrder[i] + " " + pArr[i];
@@ -264,7 +282,7 @@ function genStcOrder(srcText) {
   pArr.sort();
 
   // 선택지 만들기
-  orders = [rightOrder.join("-"), "", "", ""];
+  var orders = [rightOrder.join("-"), "", "", ""];
   for (var i = 1; i < orders.length; i++) {
     while (orders.includes((order = shuffle(["(A)", "(B)", "(C)"]).join("-"))));
     orders[i] = order;
@@ -330,6 +348,7 @@ function splitArticles() {
 
 function generate() {
   var genFuncs = {
+    "Pronoun to noun": genPronounGuess,
     "Blank keyword": genBlkKeyword,
     "Blank non-keyword": genBlkNonKeyword,
     "Sentence order": genStcOrder,
