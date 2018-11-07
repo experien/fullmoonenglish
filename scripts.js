@@ -123,17 +123,21 @@ function partition3(arr) {
 }
 
 
-function nonstopWords(srcText) {
-  return srcText.toLowerCase().match(/\w+/g).filter(x => !stopWords.includes(x));
+function splitWrd(srcText, exclude) {
+  if (!exclude)
+    exclude = [];
+
+  return srcText.toLowerCase().match(/\w+/g).filter(x => !exclude.includes(x));
 }
 
 
 function allIndexOf(str, srcText) {
-  var re = new RegExp(str, "gi");
+  // FIXME: 첫 단어는 검색에서 제외되어 있음. 잠재적 버그.
+  var re = new RegExp("\\W"+str+"[\\W\$]", "gi");
   var m = srcText;
   var ret = [];
   while ((m = re.exec(srcText)) != null) {
-    ret.push(m.index);
+    ret.push(m.index + 1);
   }
   //console.log("allindex = " + ret);
   return ret;
@@ -180,7 +184,7 @@ function genBlkKeyword(srcText) {
   }
 
   // 키워드를 뽑는다.
-  var wrdArr = nonstopWords(srcText);
+  var wrdArr = splitWrd(srcText, stopWords);
   if (!wrdArr || wrdArr.length < numCands)
     return "Too few words";
 
@@ -206,6 +210,41 @@ function genBlkKeyword(srcText) {
   return [article, "다음 중 빈 칸(______)에 들어갈 단어는?", selectionStr(selections)].join("\n\n");
 }
 
+
+function genBlkNonKeyword(srcText) {
+  // 접속사(conjunctions), 전치사(prepositions), 관계대명사(relativePronouns)
+
+  // victim <- 빈칸을 만들 단어
+  var wrdArr = splitWrd(srcText, null);
+  var flatDict = conjunctions.concat(prepositions).concat(relativePronouns);
+  var victimCands = randomChoice(wrdArr.filter(x => flatDict.includes(x)), 1);
+  if (victimCands.length < 1)
+    return "Sorry. can't find appropriate word";
+
+  var victim = victimCands[0];
+  console.log("answer = " + victim);
+
+  // friends <- victim과 종류가 같은 단어들
+  if (conjunctions.includes(victim))
+    var friends = conjunctions;
+  else if (prepositions.includes(victim))
+    var friends = prepositions;
+  else if (relativePronouns.includes(victim))
+    var friends = relativePronouns;
+  else
+    return "Sorry. can't find appropriate word";
+
+  // 지문 생상
+  index = randomChoice(allIndexOf(victim, srcText), 1)[0];
+  article = replaceAt(srcText, index, victim, "______");
+
+  // 선택지 생성
+  selections = randomChoice(friends.filter(x=>x!=victim), 3);
+  selections.push(victim);
+  selections = shuffle(selections);
+
+  return [article, "다음 중 빈 칸(______)에 들어갈 단어는?", selectionStr(selections)].join("\n\n");
+}
 
 function genStcOrder(srcText) {
   // 지문 분할
@@ -292,6 +331,7 @@ function splitArticles() {
 function generate() {
   var genFuncs = {
     "Blank keyword": genBlkKeyword,
+    "Blank non-keyword": genBlkNonKeyword,
     "Sentence order": genStcOrder,
     "Missing sentence": genStcInsert,
     "Topic sentence": genStcTopic
