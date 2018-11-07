@@ -561,6 +561,6 @@ var relativePronouns = [
 	"whoever",
 	"which",
 	"that",
-	"what"
+	"what",
 	"who"
 ];
