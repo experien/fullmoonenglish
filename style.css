@@ -29,7 +29,7 @@ input, span, textarea {
   clear: left;
 }
 
-#PageMoveButtons {
+.buttonAndOptionLine {
   text-align: center;
 }
 
@@ -37,7 +37,7 @@ input, span, textarea {
   float: left;
 }
 
-@media screen and (min-width: 1400px) {
+@media screen and (min-width: 1200px) {
   input, span, textarea {
     font-size: 11pt;
   }

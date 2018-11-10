@@ -1,5 +1,5 @@
-g_articles = [];
-g_page = 0;
+var g_articles = [];
+var g_page = 0;
 
 var g_genFuncs = {
   "Sentence order": genStcOrder,
@@ -365,6 +365,17 @@ function genStcTopic(srcText) {
 }
 
 
+function genVocabulary(srcText, mid, high) {
+  var wordArrUniq = [...(new Set(splitWrd(srcText)))];
+  var voca = wordArrUniq.filter(x => (high && hsWords.includes(x)) || (mid && msWords.includes(x)));
+
+  if (voca.length > 0)
+    return "\n\n" + "Vocabularies:\n" + voca.join("\n") + "\n";
+  else
+    return "";
+}
+
+
 
 /* ============== main functions ==============*/
 function splitArticles() {
@@ -395,6 +406,12 @@ function genAuto() {
       var txt = funcs[j](g_articles[i]);
       if (txt.substr(0, 5) != "Error") {
         txt = "\n\n" + txt + "\n";
+        if (getElm("vocaMid").checked == true || getElm("vocaHigh").checked == true) {
+          var voca = genVocabulary(g_articles[i], getElm("vocaMid").checked, getElm("vocaHigh").checked);
+          if (voca) {
+            txt += voca + "\n";
+          }
+        }
         getElm("outputText").value += txt;
       }
     }
@@ -406,7 +423,21 @@ function generate() {
   if (g_articles.length < 1)
     splitArticles();
 
-  setVal("tmpOutputText", g_genFuncs[getVal("pbType")](getVal("inputText")));
+  if (g_articles.length < 1)
+    return;
+
+  var type = getVal("pbType");
+  var srcText = getVal("inputText");
+  var txt = g_genFuncs[type](srcText);
+
+  if (getElm("vocaMid").checked == true || getElm("vocaHigh").checked == true) {
+    var voca = genVocabulary(srcText, getElm("vocaMid").checked, getElm("vocaHigh").checked);
+    if (voca) {
+      txt += voca + "\n";
+    }
+  }
+
+  setVal("tmpOutputText", txt);
 }
 
 

@@ -18,7 +18,8 @@
             Automatic
             <ol type="1">
               <li>Paste English articles separated by blank lines.</li>
-              <li>Select how many problems you want for each article, then click <em>Auto Generate</em> button.</li>
+              <li>Select how many problems you want for each article, and decide to include vocabulary or not</li>
+              <li>Click <em>Auto generate</em> button.</li>
               <li>Edit your document and click <em>Copy to clipboard</em> button.</li>
             </ol>
           </p>
@@ -37,11 +38,9 @@
       </div>
 
       <div class="container workspace">
-        <p>
-          <input type="button" value="Load" title="Load articles from the textbox below" onclick="splitArticles()" />
-
-          Problems per article:
-          <select id="numPb">
+        <p class="buttonAndOptionLine">
+          Problems/article:
+          <select id="numPb" title="For each article, how many problems do you want to generate?">
             <!-- ASSERTION: the number of options here must not exceed the number of options in "pbType" below-->
             <option value="1">1</option>
             <option value="2">2</option>
@@ -50,12 +49,18 @@
             <option value="5">5</option>
             <option value="6">6</option>
           </select>
+          <input type="checkbox" id="vocaMid" title="Include middle shcool vacabulary or not" value="vocaMid" checked />
+          Voca(Mid)
+          <input type="checkbox" id="vocaHigh" title="Include high school vacabulary or not" value="vocaHigh" checked />
+          Voca(High)
           <input type="button" value="Auto generate" title="Automatically generate problems from the textbox below" onclick="genAuto()" />
         </p>
 
         <p><textarea id="inputText" placeholder="Paste article(s) here, separated by blank line(s), and click 'Load'"></textarea></p>
 
-        <p id="PageMoveButtons">
+
+        <p class="buttonAndOptionLine">
+          <input type="button" value="Load" title="Load articles from the textbox below" onclick="splitArticles()" />
           <input type="button" value="<<<" onclick="firstPage()" />
           <input type="button" value="<" onclick="prevPage()" />
           <span id="pages">0 / 0</span>
@@ -63,7 +68,7 @@
           <input type="button" value=">>>" onclick="lastPage()" />
         </p>
 
-        <p>
+        <p class="buttonAndOptionLine">
           Problem type:
           <select id="pbType">
             <option value="Sentence order">Sentence order</option>
@@ -81,7 +86,7 @@
       </div>
 
       <div class="container output">
-        <p>
+        <p class="buttonAndOptionLine">
           <input type="button" value="Clear" title="Clear your document below" onclick="clearDoc()" />
           <input type="button" value="Copy to clipboard" title="Copy your document to the clipboard" onclick="copyToClipboard()" />
         </p>
