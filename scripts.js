@@ -18,11 +18,25 @@ function setVal(id, value) {
 
 
 /* ============== page movements ==============*/
+function toggleHowTo() {
+  content = getElm("HowToContent");
+  link = getElm("HowToLink");
+
+  if (content.style.display == "none") {
+    content.style.display = "block";
+    link.innerText = "▲ hide";
+  } else {
+    content.style.display = "none";
+    link.innerText = "▼ show";
+  }
+}
+
+
 function viewPage() {
   if (g_articles.length > 0) {
     getElm("inputText").value = g_articles[g_page];
+    getElm("pages").innerText = (g_page+1) + " / " + g_articles.length;
   }
-  getElm("pages").innerText = (g_page+1) + " / " + g_articles.length;
 }
 
 

@@ -12,14 +12,35 @@
     <div class="wrapper">
       <div class="container header">
         <h1><a href="">Full Moon English</a></h1>
+        HowTo? <a id="HowToLink" href="javascript:void(0)" onclick="toggleHowTo()">▲ hide<a/>
+        <div id="HowToContent">
+          <p>
+            Automatic
+            <ol type="1">
+              <li>Paste English articles separated by blank lines and click <em>Auto Generate</em> button.</li>
+              <li>Edit your document and click <em>Copy to clipboard</em> button.</li>
+            </ol>
+          </p>
+
+          <p>
+            Manual
+            <ol type="1">
+              <li>Paste English articles separated by blank lines and click <em>Load</em> button.</li>
+              <li>Using '<<<', '<', '>', '>>>' buttons, select a source article you want to generate problems from.</li>
+              <li>Select a problem type and click <em>Generate</em> button. You can edit or re-generate a problem.</li>
+              <li>Click <em>Append</em> button and edit your document.</li>
+              <li>If you're done, click <em>Copy to clipboard</em> button, or repeat from 2 or 3.</li>
+            </ol>
+          </p>
+        </div>
       </div>
 
       <div class="container workspace">
         <p>
-          <input type="button" value="Load" onclick="splitArticles()" />
+          <input type="button" value="Load" title="Load articles from the textbox below" onclick="splitArticles()" />
         </p>
 
-        <p><textarea id="inputText" placeholder="Paste articles here, and press 'Load'"></textarea></p>
+        <p><textarea id="inputText" placeholder="Paste article(s) here, separated by blank line(s), and click 'Load'"></textarea></p>
 
         <p id="PageMoveButtons">
           <input type="button" value="<<<" onclick="firstPage()" />
@@ -40,15 +61,15 @@
             <option value="Pronoun to noun">Pronoun to noun</option>
             <option value="Synonym">Synonym</option>
           </select>
-          <input type="button" value="Generate" onclick="generate()" />
-          <input type="button" value="Append" onclick="append()" />
+          <input type="button" value="Generate" title="Generate a problem. It'll be displayed in the textbox below" onclick="generate()" />
+          <input type="button" value="Append" title="Append the generated problem to your document" onclick="append()" />
         </p>
 
-        <p><textarea id="tmpOutputText" placeholder="Problems will be generated"></textarea></p>
+        <p><textarea id="tmpOutputText" placeholder="A problem will be generated here"></textarea></p>
       </div>
 
       <div class="container output">
-        <p><input type="button" value="Copy to clipboard" onclick="copyToClipboard()" /></p>
+        <p><input type="button" value="Copy to clipboard" title="Copy your document to the clipboard" onclick="copyToClipboard()" /></p>
         <textarea id="outputText" placeholder="Edit your document"></textarea>
       </div>
     </div>
