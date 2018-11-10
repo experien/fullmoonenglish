@@ -220,7 +220,7 @@ function genPronounGuess(srcText) {
   var article = replaceAt(srcText, index, victim, "<<"+victim+">>");
 
   console.log("answer = Sorry, I don't know");
-  return [article, "위 글에서 <<"+victim+">>"+"이(가) 의마하는 것은?", "_________________"].join("\n\n");
+  return [article, "위 글에서 <<"+victim+">>"+"이(가) 의마하는 것은?", "Answer: _________________"].join("\n\n");
 }
 
 
@@ -386,6 +386,7 @@ function genAuto() {
     return;
 
   getElm("tmpOutputText").value = "";
+  clearDoc();
 
   var n = Number(getVal("numPb"));
   funcs = randomChoice(Object.values(g_genFuncs), n);
@@ -393,7 +394,7 @@ function genAuto() {
     for (var j = 0; j < funcs.length; j++) {
       var txt = funcs[j](g_articles[i]);
       if (txt.substr(0, 5) != "Error") {
-        txt = "\n\n\n" + txt + "\n";
+        txt = "\n\n" + txt + "\n";
         getElm("outputText").value += txt;
       }
     }
@@ -410,7 +411,7 @@ function generate() {
 
 
 function append() {
-  var txt = "\n\n\n" + getVal("tmpOutputText") + "\n";
+  var txt = "\n\n" + getVal("tmpOutputText") + "\n";
   getElm("outputText").value += txt;
 }
 
