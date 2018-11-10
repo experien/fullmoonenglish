@@ -564,6 +564,7 @@ var relativePronouns = [
 	"who"
 ];
 
+
 var hsword2000 = [
 	{word:"require", meaning:"요구하다", synonyms:null},
 	{word:"technology", meaning:"과학기술", synonyms:null},
