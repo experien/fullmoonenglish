@@ -8,7 +8,6 @@ var g_genFuncs = {
   "Blank keyword": genBlkKeyword,
   "Blank non-keyword": genBlkNonKeyword,
   "Pronoun to noun": genPronounGuess,
-  "Synonym": genSynonym
 };
 
 toggleHowTo();
@@ -365,11 +364,6 @@ function genStcTopic(srcText) {
   return [article, "위 지문에서 주제문으로 적절한 문장은?", selections].join("\n\n");
 }
 
-
-function genSynonym(srcText) {
-  // TODO: 유의어 반의어
-  return "Error: not implemented yet\n";
-}
 
 
 /* ============== main functions ==============*/
