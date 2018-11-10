@@ -17,7 +17,8 @@
           <p>
             Automatic
             <ol type="1">
-              <li>Paste English articles separated by blank lines and click <em>Auto Generate</em> button.</li>
+              <li>Paste English articles separated by blank lines and click <em>Load</em> button.</li>
+              <li>Select how many problems you want for each article, then click <em>Auto Generate</em> button.</li>
               <li>Edit your document and click <em>Copy to clipboard</em> button.</li>
             </ol>
           </p>
@@ -38,6 +39,19 @@
       <div class="container workspace">
         <p>
           <input type="button" value="Load" title="Load articles from the textbox below" onclick="splitArticles()" />
+
+          Problems per article:
+          <select id="numPb">
+            <!-- ASSERTION: the number of options here must not exceed the number of options in "pbType" below-->
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+          </select>
+          <input type="button" value="Auto generate" title="Automatically generate problems from the textbox below" onclick="genAuto()" />
         </p>
 
         <p><textarea id="inputText" placeholder="Paste article(s) here, separated by blank line(s), and click 'Load'"></textarea></p>
@@ -69,7 +83,10 @@
       </div>
 
       <div class="container output">
-        <p><input type="button" value="Copy to clipboard" title="Copy your document to the clipboard" onclick="copyToClipboard()" /></p>
+        <p>
+          <input type="button" value="Clear" title="Clear your document below" onclick="clearDoc()" />
+          <input type="button" value="Copy to clipboard" title="Copy your document to the clipboard" onclick="copyToClipboard()" />
+        </p>
         <textarea id="outputText" placeholder="Edit your document"></textarea>
       </div>
     </div>

@@ -1,6 +1,18 @@
 g_articles = [];
 g_page = 0;
 
+var g_genFuncs = {
+  "Sentence order": genStcOrder,
+  "Missing sentence": genStcInsert,
+  "Topic sentence": genStcTopic,
+  "Blank keyword": genBlkKeyword,
+  "Blank non-keyword": genBlkNonKeyword,
+  "Pronoun to noun": genPronounGuess,
+  "Synonym": genSynonym
+};
+
+toggleHowTo();
+
 
 function getElm(id) {
   return document.getElementById(id);
@@ -18,6 +30,11 @@ function setVal(id, value) {
 
 
 /* ============== page movements ==============*/
+function clearDoc() {
+  getElm("outputText").value = "";
+}
+
+
 function toggleHowTo() {
   content = getElm("HowToContent");
   link = getElm("HowToLink");
@@ -197,7 +214,7 @@ function genPronounGuess(srcText) {
 
   var victimCands = splitWrd(srcText, null).filter(x=>pronouns.includes(x));
   if (victimCands.length < 1)
-    return "Sorry. can't find appropriate word";
+    return "Error: can't find appropriate word\n";
 
   var victim = randomChoice(victimCands, 1)[0];
   var index = randomChoice(allIndexOf(victim, srcText), 1)[0];
@@ -237,9 +254,9 @@ function genBlkKeyword(srcText) {
     article = replaceAt(article, indices[1], keyword, "______");
   }
 
-  var selections = [keyword].concat(randomChoice(counter.map(x=>x.kw).filter(x=>x!=keyword), 3));
+  var selections = [keyword].concat(randomChoice(counter.map(x=>x.kw).filter(x=>x!="" && x!=keyword), 3));
 
-  return [article, "다음 중 빈 칸(______)에 들어갈 단어는?", selectionStr(selections)].join("\n\n");
+  return [article, "다음 중 빈 칸(______)에 들어갈 단어는(대소문자 무관)?", selectionStr(selections)].join("\n\n");
 }
 
 
@@ -251,7 +268,7 @@ function genBlkNonKeyword(srcText) {
   var flatDict = conjunctions.concat(prepositions).concat(relativePronouns);
   var victimCands = randomChoice(wrdArr.filter(x => flatDict.includes(x)), 1);
   if (victimCands.length < 1)
-    return "Sorry. can't find appropriate word";
+    return "Error: can't find appropriate word\n";
 
   var victim = victimCands[0];
   console.log("answer = " + victim);
@@ -264,7 +281,7 @@ function genBlkNonKeyword(srcText) {
   else if (relativePronouns.includes(victim))
     var friends = relativePronouns;
   else
-    return "Sorry. can't find appropriate word";
+    return "Error: can't find appropriate word\n";
 
   // 지문 생상
   var index = randomChoice(allIndexOf(victim, srcText), 1)[0];
@@ -275,14 +292,14 @@ function genBlkNonKeyword(srcText) {
   selections.push(victim);
   selections = shuffle(selections);
 
-  return [article, "다음 중 빈 칸(______)에 들어갈 단어는?", selectionStr(selections)].join("\n\n");
+  return [article, "다음 중 빈 칸(______)에 들어갈 단어는(대소문자 무관)?", selectionStr(selections)].join("\n\n");
 }
 
 function genStcOrder(srcText) {
   // 지문 분할
   var stcArr = splitStc(srcText);
   if (!stcArr || stcArr.length < 3) {
-    return "At least 3 sentences are required.";
+    return "Error: at least 3 sentences are required.\n";
   }
 
   var pArr = partition3(stcArr);
@@ -310,7 +327,7 @@ function genStcOrder(srcText) {
 function genStcInsert(srcText) {
   var stcArr = splitStc(srcText);
   if (!stcArr || stcArr.length <= 1) {
-    return "At least 2 sentences are required.";
+    return "Error: at least 2 sentences are required.\n";
   }
 
   var alpha = Array.from("ABCDEFGHIJKLMNOPQRSTUVWXYZ").slice(0, stcArr.length);
@@ -333,7 +350,7 @@ function genStcInsert(srcText) {
 function genStcTopic(srcText) {
   var stcArr = splitStc(srcText);
   if (!stcArr || stcArr.length <= 1) {
-    return "At least 2 sentences are required.";
+    return "Error: at least 2 sentences are required.\n";
   }
 
   var alpha = Array.from("ABCDEFGHIJKLMNOPQRSTUVWXYZ").slice(0, stcArr.length);
@@ -351,39 +368,56 @@ function genStcTopic(srcText) {
 
 function genSynonym(srcText) {
   // TODO: 유의어 반의어
-  return "Sorry, not implemented yet";
+  return "Error: not implemented yet\n";
 }
 
 
 /* ============== main functions ==============*/
 function splitArticles() {
-  txt = getVal("inputText");
+  var txt = getVal("inputText");
   if (!txt)
     return;
 
   g_articles = txt.split(/\n\s*\n+/g).filter(x => x!="" && x!=" ");
   firstPage();
+  //alert(g_articles.length + " articles loaded");
+}
+
+
+function genAuto() {
+  if (g_articles.length < 1)
+    splitArticles();
+
+  if (g_articles.length < 1)
+    return;
+
+  getElm("tmpOutputText").value = "";
+
+  var n = Number(getVal("numPb"));
+  funcs = randomChoice(Object.values(g_genFuncs), n);
+  for (var i = 0; i < g_articles.length; i++) {
+    for (var j = 0; j < funcs.length; j++) {
+      var txt = funcs[j](g_articles[i]);
+      if (txt.substr(0, 5) != "Error") {
+        txt = "\n\n\n" + txt + "\n";
+        getElm("outputText").value += txt;
+      }
+    }
+  }
 }
 
 
 function generate() {
-  var genFuncs = {
-    "Sentence order": genStcOrder,
-    "Missing sentence": genStcInsert,
-    "Topic sentence": genStcTopic,
-    "Blank keyword": genBlkKeyword,
-    "Blank non-keyword": genBlkNonKeyword,
-    "Pronoun to noun": genPronounGuess,
-    "Synonym": genSynonym
-  };
+  if (g_articles.length < 1)
+    splitArticles();
 
-  setVal("tmpOutputText", genFuncs[getVal("pbType")](getVal("inputText")));
+  setVal("tmpOutputText", g_genFuncs[getVal("pbType")](getVal("inputText")));
 }
 
 
 function append() {
-  var txt = "\n\n" + getVal("tmpOutputText") + "\n";
-  getElm("outputText").appendChild(document.createTextNode(txt));
+  var txt = "\n\n\n" + getVal("tmpOutputText") + "\n";
+  getElm("outputText").value += txt;
 }
 
 
