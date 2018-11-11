@@ -367,14 +367,14 @@ function genStcTopic(srcText) {
 
 function genVocabulary(srcText, mid, high) {
   var wordArrUniq = [...(new Set(splitWrd(srcText)))];
-  var voca = wordArrUniq.filter(x => (high && hsWords.includes(x)) || (mid && msWords.includes(x)));
+  var vocaArr = wordArrUniq.filter(x => (high && hsWords.includes(x)) || (mid && msWords.includes(x)));
+  //vocaArr = vocaArr.map(x => x + " " + translate(x).join(", "));
 
-  if (voca.length > 0)
-    return "\n\n" + "Vocabularies:\n" + voca.join("\n") + "\n";
+  if (vocaArr.length > 0)
+    return "\n\n" + "Vocabularies:\n" + vocaArr.join("\n") + "\n";
   else
     return "";
 }
-
 
 
 /* ============== main functions ==============*/
