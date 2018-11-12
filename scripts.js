@@ -1,5 +1,6 @@
 var g_articles = [];
 var g_page = 0;
+var g_response = []; // arrays are synchronous! Wow
 
 var g_genFuncs = {
   "Sentence order": genStcOrder,
@@ -220,7 +221,7 @@ function genPronounGuess(srcText) {
   var article = replaceAt(srcText, index, victim, "<<"+victim+">>");
 
   console.log("answer = Sorry, I don't know");
-  return [article, "위 글에서 <<"+victim+">>"+"이(가) 의마하는 것은?", "Answer: _________________"].join("\n\n");
+  return [article, "위 글에서 <<"+victim+">>"+"이(가) 의마하는 것은?", "Answer) _________________"].join("\n\n");
 }
 
 
@@ -368,12 +369,47 @@ function genStcTopic(srcText) {
 function genVocabulary(srcText, mid, high) {
   var wordArrUniq = [...(new Set(splitWrd(srcText)))];
   var vocaArr = wordArrUniq.filter(x => (high && hsWords.includes(x)) || (mid && msWords.includes(x)));
-  //vocaArr = vocaArr.map(x => x + " " + translate(x).join(", "));
+  //console.log(vocaArr);
 
-  if (vocaArr.length > 0)
-    return "\n\n" + "Vocabularies:\n" + vocaArr.join("\n") + "\n";
-  else
+  if (vocaArr.length == 0)
     return "";
+
+  vocaArr.forEach(x => translate(x, 3));
+
+  setTimeout(function(){
+    while (g_response.length > 0) {
+      v = g_response.pop();
+      //console.log(v);
+      if (getElm("outputText").value)
+        getElm("outputText").value = getElm("outputText").value.replace(v[0], v[1].join(", "));
+
+      if (getElm("tmpOutputText").value)
+        getElm("tmpOutputText").value = getElm("tmpOutputText").value.replace(v[0], v[1].join(", "));
+    }
+  }, 2000);
+
+  setTimeout(function() {
+    if (getElm("outputText").value)
+      getElm("outputText").value = getElm("outputText").value.replace(/\#\!\w+?(?=\W)/g, "");
+
+    if (getElm("tmpOutputText").value)
+      getElm("tmpOutputText").value = getElm("tmpOutputText").value.replace(/\#\!\w+?(?=\W)/g, "");
+  }, 4000);
+
+  return "\n\n" + "[Vocabularies]\n" + vocaArr.map(x=>x+": #!"+x).join("\n") + "\n";
+}
+
+
+function translate(word, maxMeaning) {
+  $.ajax({
+    url: "https://glosbe.com/gapi/translate?from=eng&dest=kor&format=json&pretty=true&phrase=" + word,
+    dataType: 'jsonp',
+    success: function(jsonObj) {
+        meanings = jsonObj.tuc.filter(x => "phrase" in x).map(x => x.phrase.text).slice(0, maxMeaning);
+        g_response.push(["#!"+word, meanings]);
+        //console.log(g_response);
+    }
+  });
 }
 
 
@@ -408,9 +444,8 @@ function genAuto() {
         txt = "\n\n" + txt + "\n";
         if (getElm("vocaMid").checked == true || getElm("vocaHigh").checked == true) {
           var voca = genVocabulary(g_articles[i], getElm("vocaMid").checked, getElm("vocaHigh").checked);
-          if (voca) {
+          if (voca)
             txt += voca + "\n";
-          }
         }
         getElm("outputText").value += txt;
       }
